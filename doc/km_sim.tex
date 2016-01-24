@@ -1,7 +1,8 @@
-\begin{sidewaystable}
+%\begin{sidewaystable}
+\begin{table}[h]
 \centering
-\caption{Simulation Experiment Results}
-\small
+\caption{The averaged clustering quality scores over 100 replications.}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llcccccccccccccccccccc}
 \hline
 $T$& $p$& \multicolumn{4}{c}{\sf Rand} &\multicolumn{4}{c}{\sf Jaccard}& \multicolumn{4}{c}{\sf FMI}& \multicolumn{4}{c}{\sf CSM}& \multicolumn{4}{c}{\sf NMI}\\
@@ -38,4 +39,6 @@ $3200$ 	& $0.2T$ 	& .928& .894& .902& .871& .766& .730& .737& .719& .856& .834& 
 		& $5T$ 		& xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx & xx\\
 \hline
 \end{tabular}
-\end{sidewaystable}
+}
+\end{table}
+%\end{sidewaystable}

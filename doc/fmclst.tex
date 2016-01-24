@@ -1,0 +1,227 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{nips14submit_e}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{rotating}
+\usepackage{natbib}
+\bibliographystyle{abbrvnat}
+%\setcitestyle{authoryear,open={(},close={)}}
+%\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
+
+% font info
+\usepackage{mathpazo} % math font
+\usepackage{tgschola} % text font
+
+
+\title{Time series clustering based on factor model}
+
+
+\author{
+Xiang~Zhu\\
+Department of Statistics\\
+The University of Chicago\\
+Chicago, IL 60637\\
+\texttt{xiangzhu@uchicago.edu} \\
+%\And
+%Coauthor \\
+%Affiliation \\
+%Address \\
+%\texttt{email} \\
+%\AND
+%Coauthor \\
+%Affiliation \\
+%Address \\
+%\texttt{email} \\
+%\And
+%Coauthor \\
+%Affiliation \\
+%Address \\
+%\texttt{email} \\
+%\And
+%Coauthor \\
+%Affiliation \\
+%Address \\
+%\texttt{email} \\
+%(if needed)\\
+}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
+
+\maketitle
+
+%\begin{abstract}
+%The abstract paragraph should be indented 1/2~inch (3~picas) on both left and
+%right-hand margins. Use 10~point type, with a vertical spacing of 11~points.
+%The word \textbf{Abstract} must be centered, bold, and in point size 12. Two
+%line spaces precede the abstract. The abstract must be limited to one
+%paragraph.
+%\end{abstract}
+
+\section{Overview}
+The basic idea of this work is summarized as follows. The high-dimensional multivariate time series are decomposed into two parts: a dynamic part driven by a lower-dimensional factor process and a static part which is a vector of white noise. In the factor process, the rows of loading matrix capture most of the useful information about the stochastic dynamic structure of the original time series. Differences between variates of time series data can be approximated by those between the corresponding rows of the loading matrix. Hence, clustering the variates of time series data is achieved by clustering the rows of factor loading matrix. 
+
+\section{Method}
+
+\subsection{Clustering based on factor model}
+Suppose that we observe the $p$-dimensional time series $\{{\bf y}_t\}_{t\in[T]}$, $[T]:=\{1,\ldots,T\}$, and there is some linear dynamic structure in the time series. Specifically, we assume that ${\bf y}_t$ can be decomposed into two parts, a static part (i.e. white noise) and a dynamic part driven by a low-dimensional process:
+\begin{equation}\label{FM}
+{\bf y}_t={\bf A}{\bf x}_t+{\bm\epsilon}_t,
+\end{equation}
+where ${\bf x}_t$ is an $r\times 1$ latent process with unknown dimension $r\leq p$, $\bf A$ is a $p\times r$ unknown constant matrix, and ${\bm \epsilon}_t$ is a $p$-dimensional white-noise process. The serial dependence of ${\bf y}_t$ is determined by the lower-dimensional process ${\bf x}_t$, which is called a factor process, and an effective dimension reduction is thus achieved in this way. The factor model (\ref{FM}) above can be traced back at least to \cite{pb_fm87}. The factor model (\ref{FM}) maps the $i$th variate of ${\bf y}_t$ to the $i$th row of $A$. Specifically, consider two variates $i$ and $j$ at each time $t\in[T]$,
+\begin{eqnarray}
+y_{ti}&=& a_{i1}x_{t1}+a_{i2}x_{t2}+\ldots +a_{ir}x_{tr}+\epsilon_{ti}\nonumber\\
+y_{tj}&=& a_{j1}x_{t1}+a_{j2}x_{t2}+\ldots +a_{jr}x_{tr}+\epsilon_{tj}\nonumber
+\end{eqnarray}
+where $y_{ti}$ and $x_{tk}$ are the $i$th and $k$th components of ${\bf y}_t$ and ${\bf x}_t$ respectively, $i\in[p]$, $k\in[r]$. We can see that, given the factor process ${\bf x}_t$, the temporal dynamics of the $i$th variate in $\{{\bf y}_t\}_{t\in[T]}$ is determined by its factor loading $A_i:=(a_{i1},\ldots ,a_{ir})$ (the $i$th row of $\bf A$). Moreover, because they share the same factor process ${\bf x}_t$, the difference between variates $i$ and $j$ primarily depends on the difference between their factor loadings $A_i$ and $A_j$. Based on these observations, the clustering of $p$ variates in the time series data $\{{\bf y}_t\}$ can be simplified as the clustering of $p$ row vectors in the loading matrix $\bf A$. 
+
+In our implementation, we use the Euclidean ($L^2$) norm as a metric of difference between the $i$th and $j$th variate:
+\[d(i,j):=||A_i-A_j||_2=\sqrt{\sum_{k=1}^r(a_{ik}-a_{jk})^2}.\]
+To cluster the columns of the loading matrix $A$, we can simply use the off-the-shelf clustering methods such as $k$-means and hierarchical clustering. 
+  
+%Factor modeling of $\{{\bf y}_t\}_{t\in[T]}$ implies that the temporal dynamics of its $i$th variate is totally determined by the $i$th row $A_i$ of $\bf A$. We further assume that the temporal similarity among different variates is captured by their hidden linear dynamic structures. Specifically,  Hence, clustering of $p$ time series is simplified as clustering $p$ row vectors in the loading matrix $\bf A$. The key for the clustering $p-$dimensional time series ${\bf y}_t$ is to estimate the loading matrix $\bf A$. In a sense, the loading matrix conveys all useful information about the stochastic structure of the process since $[${\sf WHAT?}$]$. Then a measure of structural diversity between two variates $i$ and $j$ in multiple time series ${\bf y}_t$ can be obtain by comparing the respective loadings $A_i$ and $A_j$ and a metric of similarity between these two variates are defined as
+%\[d(i,j)=\sqrt{\sum_{k=1}^r(a_{ik}-a_{jk})^2}.\]
+%$[${\sf Check the properties of this metric!}$]$. Since the white noise exhibits no serial correlations, the decomposition in the factor modelling is unique in the sense that both the number of factors (the dimension of the factor process) and the factor loading space are identifiable. (\textsf{Rotation difference?}) Thus, $d(i,j)$ always exists and satisfies the classical properties of a distance, i.e. non-negativity, symmetry and triangular inequality.
+
+\subsection{Factor modelling for time series}
+The factor modelling approach taken here is based on \cite{ly_fm12} and \cite{lyb_fm11}, and we refer it to Lam-Yao procedure here.
+
+To make the factor model (\ref{FM}) identifiable, several assumptions are required.
+\begin{enumerate}
+\item No linear combinations of ${\bf x}_t$ are white noise; otherwise such components can be absorbed into ${\bm \epsilon}_t$.
+\item The rank of $\bf A$ is $r$; otherwise the model can be expressed equivalently in terms of a lower-dimensional factor.
+\item Columns of $\bf A:=({\bf a}_1,\ldots,{\bf a}_r)$ are orthonormal: even though $\bf A$ and ${\bf x}_t$ are not uniquely determined but the {\it factor loading space} ${\cal M}({\bf A})$, that is, the $r-$dimensional linear space spanned by the columns of $\bf A$, is uniquely defined.
+\item ${\bf x}_t$ is weakly stationary and the future white-noise components are uncorrelated with the factors up to the present. (Note that ${\bf x}_t$ and ${\bm\epsilon}_s$ are assumed to be uncorrelated for any $t$ and $s$ in most factor modelling literature).
+\end{enumerate}
+
+%The key for the inference for factor model is to determine the number of factors $r$ and to estimate the $p\times r$ factor loading matrix $\bf A$, or more precisely the factor loading space ${\cal M}({\bf A})$.
+%Lam-Yao procedure assumes that ${\bf x}_t$ is weakly stationary and the future white-noise components are uncorrelated with the factors up to the present. (Note that ${\bf x}_t$ and ${\bm\epsilon}_s$ are assumed to be uncorrelated for any $t$ and $s$ in most factor modelling literature).
+
+%Put
+%\[{\bm\Sigma}_y(k)={\sf Cov}({\bf y}_{t+k},{\bf y}_t),~{\bm\Sigma}_x(k)={\sf Cov}({\bf x}_{t+k},{\bf x}_t),~{\bm \Sigma}_{x\epsilon}={\sf Cov}({\bf x}_{t+k},{\bm\epsilon}_{t}).\]
+
+For any prescribed integer $k_0\geq 1$, define
+\begin{equation}
+{\bf M}=\sum_{k=1}^{k_0}{\bm\Sigma}_y(k){\bm\Sigma}^{\sf T}_y(k),
+\end{equation}
+where ${\bm\Sigma}_y(k):={\sf Cov}({\bf y}_{t+k},{\bf y}_t)$ is the covariance matrix of ${\bf y}_t$ at time lag $k$.
+Consider the $p\times(p-r)$ matrix ${\bf B}=({\bf b}_1,\ldots,{\bf b}_{p-r})$ associated with the factor loading matrix $\bf A$ for which $({\bf A},{\bf B})$ forms a $p\times p$ orthogonal matrix: ${\bf B}^{\sf T}{\bf A}={\bf 0}$ and ${\bf B}^{\sf T}{\bf B}={\bf I}_{p-r}$. It thus follows that ${\bf MB=0}$, implying that the columns of $\bf B$ are the eigenvectors of $\bf M$ corresponding to zero-eigenvalues. The factor loading space ${\cal M}({\bf A})$ is therefore spanned by the eigenvectors of $\bf M$ corresponding to its non-zero eigenvalues and the number of the non-zero eigenvalues is $r$. The sum-quantity $\bf M$ accumulates the information from different time lags and this is useful when the sample size $n$ is small. Non-negative definite matrix ${\bf \Sigma}_y(k){\bf\Sigma}^{\sf T}_y(k)$ is used to avoid cancellation of information from different time lags. Small values of $k_0$ are favoured, since the autocorrelation is often at its strongest at the small time lags, and estimation for ${\bm\Sigma}_y(k)$ with larger $k$ is often less accurate.
+
+To estimate the number of factors $r$ and the factor loading space ${\cal M}({\bf A})$, just perform an eigenanalysis on 
+\[{\widehat{\bf M}}:=\sum_{k=1}^{k_0}{\widehat{\bm\Sigma}}_y(k){\widehat{\bm\Sigma}}^{\sf T}_y(k),\]
+where ${\widehat{\bm\Sigma}}_y(k)$ denotes the sample covariance matrix of ${\bf y}_t$ at time lag $k$:
+\[{\widehat{\bm\Sigma}}_y(k):=\frac{1}{T-k}\sum_{t=1}^{T-k}({\bf y}_{t+k}-{\overline{\bf y}})\cdot({\bf y}_{t}-{\overline{\bf y}})^{\sf T},~~{\overline{\bf y}}=\frac{1}{T}\sum_{t=1}^T{\bf y}_t.\] 
+
+The Lam-Yao procedure is summarized as follows.
+\begin{enumerate}
+\item A ratio-based estimator for the number of factors $r$:
+\[{\hat r}=\arg\min_{1\leq i\leq R}\frac{{\hat\lambda}_{i+1}}{{\hat\lambda}_i},\]
+where ${\hat\lambda}_1\geq\ldots\geq {\hat\lambda}_p$ are the eigenvalues of ${\widehat{\bf M}}$ and $r\leq R\leq p$ is a constant. (In practice take $R=p/2$.)
+\item The columns of the estimated factor loading matrix ${\widehat{\bf A}}$ are the $\hat{r}$th orthonormal eigenvectors of $\hat{\bf M}$ corresponding to its $\hat{r}$ largest eigenvalues.
+\item The estimated factor process is ${\hat{\bf x}}_t={\hat{\bf A}}^{\sf T}{\bf y}_t$, the resulting residuals are $\hat{\bm\epsilon}_t=({\bf I}_p-{\hat{\bf A}}{\hat{\bf A}}^{\sf T}){\hat{\bf y}}_t$, and the estimated dynamic component ${{\bf y}}_t$ is ${\hat{\bf y}}_t={\hat{\bf A}}{\hat{\bf x}}_t$.
+\end{enumerate}
+
+\section{Results}
+Evaluating clustering methods is nontrivial because clustering is an unsupervised learning process where the information about the actual partitions is absent. We thus use pre-classified datasets and compare the clustering results with the known labels. 
+
+\subsection{Evaluation criteria}
+Following \citet{wt_05}, we used five objective clustering evaluation criteria to assess the clustering methods: Jaccard score, Rand index, Folkes and Mallow index \citep{cv_01}, clustering similarity measure \citep{csm_00} and normalized mutual information \citep{nmi_02}.\\
+Let ${\cal G}=\{G_1,G_2,\ldots,G_M\}$ denote the true clusters from a supervised dataset and ${\cal A}=\{A_1,A_2,\ldots,A_M\}$ denote the clusters obtained from a clustering algorithm. For all pairs of the series, count the following quantities $\{a,b,c,d\}$:
+\begin{itemize}
+\item[$a:=$] the number of pairs belonging to the same cluster in both $\cal G$ and $\cal A$;
+\item[$b:=$] the number of pairs belonging to the same cluster in $\cal G$ but not in $\cal A$;
+\item[$c:=$] the number of pairs belonging to the same cluster in $\cal A$ but not in $\cal G$;
+\item[$d:=$] the number of pairs belonging to different clusters in both $\cal G$ and $\cal A$. 
+\end{itemize} 
+Five clustering evaluation criteria are defined as follows 
+\begin{enumerate}
+\item Jacard score
+\[{\sf Jacard}({\cal G},{\cal A}):=\frac{a}{a+b+c};\]
+\item Rand index
+\[{\sf Rand}({\cal G},{\cal A}):=\frac{a+d}{a+b+c+d};\]
+\item Folkes and Mallow index
+\[{\sf FMI}({\cal G},{\cal A}):=\sqrt{\frac{a}{a+b}\cdot\frac{a}{a+c}};\]
+\item Cluster similarity measure
+\[{\sf CSM}({\cal G},{\cal A}):=\frac{1}{M}\sum_{i=1}^M\max_{1\leq j\leq M}{\sf Sim}(G_i,A_j),~\mbox{where}~{\sf Sim}(G_i,A_j):=\frac{2|G_i\cap A_j|}{|G_i|+|A_j|};\]
+\item Normalized Mutual Information
+\[{\sf NMI}({\cal G},{\cal A}):=\frac{\sum_{i=1}^M\sum_{j=1}^MN_{i,j}\log\left(\frac{N\cdot N_{i,j}}{|G_i|\cdot|A_j|}\right)}{\left(\sum_{i=1}^M|G_i|\log\left(\frac{|G_i|}{N}\right)\right)^{1/2}\cdot\left(\sum_{j=1}^M|A_j|\log\left(\frac{|A_j|}{N}\right)\right)^{1/2}}\]
+where $N$ is the total number of time series in the dataset and $N_{i,j}=|G_i\cap A_j|$.
+\end{enumerate}
+The clustering evaluation criteria above range from 0 to 1, where 1 corresponds to the case when $\cal G$ and $\cal A$ are identical. Larger the values of criteria indicates higher level of similarity between $\cal A$ and $\cal G$.
+
+\subsection{Clustering methods}
+We considered four clustering methods here. Specifically, we applied the off-the-shelve methods (e.g. $k$-means or hierarchical clustering) on four types of ``input'' data. 
+\begin{enumerate}
+\item FM: the factor loadings estimated by Lam-Yao procedure \citep{ly_fm12};
+\item OR: the original time series data matrix;
+\item DW: the Haar wavelet coefficients of the original time series \citep{wt_05};
+\item AP: the AR($\infty$) operator coefficients of the original time series \citep{dp_90}. 
+\end{enumerate}
+
+\subsection{Simulations}
+We simulated $p$-dimensional time series $\{{\bf y}_t\}$ of length $T$ from the factor model (\ref{FM}), where the factor process $\{{\bf x}_t\}$ and  loading matrix $A$ are specified as follows. The factor process ${\bf x}_t$ has 6 variates, and the $i$th variate of ${\bf x}_t$ is given by the $i$th model in Table 1, $i\in[6]$. (These models were considered by \cite{nf_10} and other authors in previous work.) The loading matrix $A$ has 4 types of dynamics, that is, each row of $A$ is the same as one of the four types below. (Each type has the same number of rows in $A$.)
+\begin{center}
+\begin{tabular}{cccc}
+\hline
+Type I & (1,1,1,1,1,1) & Type II & (1,0,0,0,1,0)\\
+Type III & (0,1,1,0,0,0) & Type IV & (0,0,0,1,0,1)\\
+\hline
+\end{tabular}
+\end{center}     
+For the simulation data, we know the number of clusters (4) and the ground-truth label (Type I-IV) of each variate in the original time series. The off-the-shelve clustering method used here is the $k$-means clustering \citep{KM_79}. For each setting of $(T,p)$, the number of replications is 100. The results of simulations are summarized in Table 2.
+
+%For each replication of the experiment, the dataset $S$ subjected to clustering was formed by one partial realization of length $T=200$ simulated from each of the autoregressive models enumerated in Table \ref{ARM}. At each trial of the experiment, one series of length $T=200$ were generated from each of models M1 to M6. These models were considered in \citep{nf_10} and by other authors in previous works. The dimension of the factor process is six. The algorithm of \citet{KM_79} is used in the implementation of $k-$means clustering. Since the clustering results of $k-$means clustering depend on the initial clustering centers that shoue be randomly initialized in each run, we run $k-$means 100 times with random initialized centres every time. For each iteration, the number of random start for $k-$means algorithm is one. For AR($\infty$) in this part of experiment, the maximum order of model to fit is set as the minimum of $T-1$ and $10\times{\sf round}(\log_{10} T)$ and the estimation method is Yule-Walker. 
+
+\begin{table}[h]
+\centering
+\caption{Models that are used to define the factor process in the simulation data.}
+\begin{tabular}{ccc}
+\hline
+Model & Name & Form \\
+\hline
+1 & AR & $X_t=0.6X_{t-1}+\epsilon_t$ \\
+2 & Bilinear & $X_t=(0.3-0.2\epsilon_{t-1})\cdot X_{t-1}+1+\epsilon_t$ \\
+3 & EXPAR & $X_t=(0.9\exp\{-X_{t-1}^2\}-0.6)X_{t-1}+1+\epsilon_t$ \\
+4 & SETAR & $X_t=(0.3X_{t-1}+1)\cdot \mbox{sign}(X_{t-1}-0.2)+\epsilon_t$ \\
+5 & NLAR & $X_t=0.7|X_{t-1}|\cdot(2+|X_{t-1}|)^{-1}+\epsilon_t$ \\
+6 & STAR & $X_t=0.8X_{t-1}-0.8X_{t-1}\cdot(1+\exp\{-10X_{t-1}\})^{-1}+\epsilon_t$\\
+\hline
+\end{tabular}
+\end{table}
+
+%There are four types of dynamics in the loading matrix ${\bf A}$, that is, each row of $\bf A$ equals to one the four types in Table \ref{LM}. There are $k$ rows for each type in the loading matrix $\bf A$. Thus, $p=4\times k$. The number of classes in this simulated dataset is 4 and the ground-truth labels are known.
+
+\input{km_sim.tex}
+
+\subsection{Real data}
+We also compared the clustering procedure based on factor modelling with other methods on real data. Five classified datasets were retrieved from the UCR Time Series Classification/Clustering Page \citep{UCR}. Results of this section is summarized in Table 3. The Euclidean distance was used for both $k$-means and hierarchical clustering algorithms. Ward linkage \citep{ward} was used in the hierarchical clustering algorithm. Results based on the $k$-means clustering were averaged over 100 trials with randomly initialized centers.
+
+%The reason why these six datasets are chosen is that {\sf .......Explain it!}. 
+%\begin{center}
+%[\sf UCR Dataset description!]
+%\end{center}
+%Euclidean distance is used for both $k-$means and hierarchical clustering algorithms. The $k-$means clustering was conducted 100 times with random initialized centres for each experiment. As each run of hierarchical clustering for the same dataset always gets the same result, multiple runs are not needed in hierarchical clustering procedures. We use ward linkage \citep{ward} for the hierarchical clustering algorithm in our experiment. Table XXX lists the mean of evaluation criteria values of 100 runs for $k-$means with the estimated factor loading matrix (FM), the original data (OR), the extracted features using wavelet transformation (DW) and the matrix of AR$(\infty)$ coefficients (AP) for each datasets. Table XXX presents the evaluation criteria values produced by these four methods for each datasets. {\sf Methods compared here:}
+%\begin{itemize} 
+%\item[DW] An unsupervised feature extraction was performed for time series clustering using orthogonal wavelet transform \citep{wt_05}. The original time series could be well approximated by their wavelet coefficients in some proper dimension. The desired dimension of features is determined by minimizing the dimensionality and sum of squared errors between features and the original time series simultaneously. Time efficiency of this feature extraction method is guaranteed when Haar wavelet is used.
+%\item[DP] For clustering a set of dynamic structures on the class of autoregressive integrated moving-average invertible models, \citet{dp_90} used the Euclidean distance of their AR($\infty$) operator coefficients to measure the structural diversity between two time series. In the experiments, the order parameter of the autoregressive model is chosen by Akaike Information Criterion and the method used to fit the model is 
+%\end{itemize}
+
+\input{ucr.tex}
+
+\bibliography{fmclst}
+
+\end{document}
