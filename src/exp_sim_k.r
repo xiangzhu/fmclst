@@ -36,8 +36,8 @@ A <- (eigen(M)$vectors)[,1:6]
 # Compute the clustering evaluation scores.
 RAND = JACC = FOMA = EVA = NOMI = rep(0,4)
 for (i in 1:100){
-  # Apply k-means clustering over four input matrices.
-  # FM: the factor loading matrix
+  	# Apply k-means clustering over four input matrices.
+  	# FM: the factor loading matrix
 	mlabel <- kmeans(A, 4, nstart=1)$cluster
 	# OR: the original time series
 	olabel <- kmeans(data[,-1], 4, nstart=1)$cluster
@@ -54,26 +54,26 @@ for (i in 1:100){
 	
 	# Compute the Jaccard score.
 	JACC[1] <- JACC[1] + JC(label,mlabel)
-  JACC[2] <- JACC[2] + JC(label,olabel)
-  JACC[3] <- JACC[3] + JC(label,wlabel)
+  	JACC[2] <- JACC[2] + JC(label,olabel)
+  	JACC[3] <- JACC[3] + JC(label,wlabel)
 	JACC[4] <- JACC[4] + JC(label,alabel)
 	
 	# Compute the Folkes and Mallow index.
 	FOMA[1] <- FOMA[1] + FM(label,mlabel)
-  FOMA[2] <- FOMA[2] + FM(label,olabel)
-  FOMA[3] <- FOMA[3] + FM(label,wlabel)
+  	FOMA[2] <- FOMA[2] + FM(label,olabel)
+  	FOMA[3] <- FOMA[3] + FM(label,wlabel)
 	FOMA[4] <- FOMA[4] + FM(label,alabel)
 	
 	# Compute the Cluster similarity measure.
  	EVA[1] <- EVA[1] + CSM(label,mlabel)
-  EVA[2] <- EVA[2] + CSM(label,olabel)
-  EVA[3] <- EVA[3] + CSM(label,wlabel)
+  	EVA[2] <- EVA[2] + CSM(label,olabel)
+  	EVA[3] <- EVA[3] + CSM(label,wlabel)
 	EVA[4] <- EVA[4] + CSM(label,alabel)
 	
 	# Compute the Normalized Mutual Information.
-  NOMI[1] <- NOMI[1] + NMI(label,mlabel)
-  NOMI[2] <- NOMI[2] + NMI(label,olabel)
-  NOMI[3] <- NOMI[3] + NMI(label,wlabel)
+  	NOMI[1] <- NOMI[1] + NMI(label,mlabel)
+  	NOMI[2] <- NOMI[2] + NMI(label,olabel)
+  	NOMI[3] <- NOMI[3] + NMI(label,wlabel)
 	NOMI[4] <- NOMI[4] + NMI(label,alabel)
 	
 }
